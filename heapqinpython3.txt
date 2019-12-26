@@ -1,0 +1,28 @@
+In python 2 below thing works but in python 3 it does'nt
+
+heapq will use the <= operator on whatever stuff you put into it.
+
+Tuples are compared position by position: the first item of the first tuple is compared to the first item of the second tuple; if they are not equal (i.e. the first is greater or smaller than the second) then that's the result of the comparison, else the second item is considered, then the third and so on.
+
+If the first item of each tuple is unique, comparison will always happen only on the first item:
+
+>>> x = (1, object())
+>>> y = (2, object())
+>>> x <= y
+True
+(note: I used object() to create an anonymous object, which does not implement the comparison operators)
+
+The problem appears when the first item of the tuple is not unique (i.e. the first tuple item will be equal for some pair of tuples), then comparison will have to compare the second item of the tuple:
+
+>>> z = (1, object())
+>>> x <= z
+Traceback (most recent call last):
+  File "<input>", line 1, in <module>
+    x <= z
+TypeError: '<=' not supported between instances of 'object' and 'object'
+So, either you implement comparison operators in your object, or you make sure the preceding items in the tuple are always comparable and together are unique.
+
+For example, you could add the object's id to the tuple, so that your tuples become:
+
+(priority, id(obj), obj)
+as the object id is unique. (beware: you'll hit this problem again if adding two instances of the same object with the same priority).
